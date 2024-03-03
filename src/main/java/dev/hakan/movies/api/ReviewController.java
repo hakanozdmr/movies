@@ -2,6 +2,8 @@ package dev.hakan.movies.api;
 
 import dev.hakan.movies.business.service.MovieService;
 import dev.hakan.movies.business.service.ReviewService;
+import dev.hakan.movies.data.dto.SearchAndSortDto;
+import dev.hakan.movies.data.model.Movie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +29,10 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<?> createReview(@RequestBody Map<String,String> payload){
          reviewService.createReview(payload.get("reviewBody"),payload.get("imdbId"));
-
-        return new ResponseEntity<>(movieService.getMovieByImdbId(payload.get("imdbId")), HttpStatus.CREATED);
+        Movie movie = new Movie();
+        movie.setImdbId(payload.get("imdbId"));
+        SearchAndSortDto searchAndSortDto = new SearchAndSortDto();
+        searchAndSortDto.setMovie(movie);
+        return new ResponseEntity<>(movieService.searchAllParamsWithIs(searchAndSortDto), HttpStatus.CREATED);
      }
 }
