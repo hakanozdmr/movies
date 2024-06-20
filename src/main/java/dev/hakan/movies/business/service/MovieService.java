@@ -13,10 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.hakan.movies.util.QueryUtil.getAllParamWithIs;
@@ -37,30 +34,30 @@ public class MovieService {
         if (request.getSelectedField() != null){
             return searchOneFieldAndSortWithLike(request);
         }
-        Query query = SortedFieldIsNull(request);
+        Query query = new Query();
         if (request.getMovie() != null ){
             query = getAllParamWithLike(getDeclaredFieldFromObject(request.getMovie()));
         }
-        //TODO : SortedFieldIsNull un içerisine alınıcak
-        Pageable pageable = PageRequest.of(0,Integer.MAX_VALUE, Sort.Direction.DESC,request.getSortedField());
-        query = query.with(pageable);
+        query.with(SortedFieldIsNull(request));
         return mongoTemplate.find(query, Movie.class);
     }
     private List<?> searchOneFieldAndSortWithLike(SearchAndSortDto request) {
-        Query query = SortedFieldIsNull(request);
+        Query query = new Query();
         if (request.getMovie() != null ){
             query = getAllParamWithLike(getDeclaredFieldFromObject(request.getMovie()));
         }
+        query.with(SortedFieldIsNull(request));
         query.fields().include(request.getSelectedField());
         List<Movie> list = mongoTemplate.find(query, Movie.class);
 
         return selectOneField(list, request);
     }
     private List<?> searchOneFieldAndSortWithIs(SearchAndSortDto request) {
-        Query query = SortedFieldIsNull(request);
+        Query query = new Query();
         if (request.getMovie() != null ){
             query = getAllParamWithIs(getDeclaredFieldFromObject(request.getMovie()));
         }
+        query.with(SortedFieldIsNull(request));
         query.fields().include(request.getSelectedField());
         List<Movie> list = mongoTemplate.find(query, Movie.class);
 
@@ -70,15 +67,16 @@ public class MovieService {
         if (request.getSelectedField() != null){
             return searchOneFieldAndSortWithIs(request);
         }
-        Query query = SortedFieldIsNull(request);
+        Query query = new Query();
         if (request.getMovie() != null ){
             query = getAllParamWithIs(getDeclaredFieldFromObject(request.getMovie()));
         }
+        query.with(SortedFieldIsNull(request));
         return mongoTemplate.find(query, Movie.class);
     }
     private Map<String,String> requestToMap(HttpServletRequest request){
         Map<String,String> map = new LinkedHashMap<>();
-        java.util.Enumeration<String> parameterNames = request.getParameterNames();
+        Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
             String paramValue = request.getParameter(paramName);
@@ -86,14 +84,21 @@ public class MovieService {
         }
         return map;
     }
-    private Query SortedFieldIsNull(SearchAndSortDto request){
-        Query query = new Query();
-        if (request.getSortedField() != null ){
-            query = request.getDirection().equals(SortingDirection.DESC)
-                    ? query.with(Sort.by(request.getSortedField()).descending())
-                    : query.with(Sort.by(request.getSortedField()).ascending());
+    private PageRequest SortedFieldIsNull(SearchAndSortDto request){
+        PageRequest pageRequest = null;
+        if (request.getPageableDto() != null ){
+            int pageSize = request.getPageableDto().getPageSize() == 0 ? Integer.MAX_VALUE : request.getPageableDto().getPageSize();
+            if (request.getPageableDto().getSortedField() != null){
+                SortingDirection sortingDirection = request.getPageableDto().getDirection() == null ? SortingDirection.DESC : request.getPageableDto().getDirection();
+                pageRequest = SortingDirection.ASC.name().equals(sortingDirection.name())
+                        ? PageRequest.of(request.getPageableDto().getPageNumber(),pageSize, Sort.Direction.ASC,request.getPageableDto().getSortedField())
+                        : PageRequest.of(request.getPageableDto().getPageNumber(),pageSize, Sort.Direction.DESC,request.getPageableDto().getSortedField());
+            }
+            else {
+                pageRequest=PageRequest.of(request.getPageableDto().getPageNumber(),request.getPageableDto().getPageSize());
+            }
         }
-        return query;
+        return pageRequest;
     }
     private <T> List<T>  selectOneField(List<T> list , SearchAndSortDto request){
         List<T> fieldList =  list.stream()

@@ -1,7 +1,7 @@
 package dev.hakan.movies.data.dto;
 
-import dev.hakan.movies.data.enums.SortingDirection;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.hakan.movies.data.model.Movie;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import lombok.NonNull;
 public class SearchAndSortDto {
 
     private Movie movie;
-    private String sortedField;
-    private SortingDirection direction;
     private String selectedField;
+    @JsonProperty("pageable")
+    private PageableDto pageableDto;
 }
