@@ -4,11 +4,10 @@ import dev.hakan.movies.data.dto.SearchAndSortDto;
 import dev.hakan.movies.data.enums.SortingDirection;
 import dev.hakan.movies.data.model.Movie;
 import dev.hakan.movies.data.repository.MovieRepository;
+import dev.hakan.movies.data.repository.MovieRepositoryCustom;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,10 @@ import static dev.hakan.movies.util.Utility.getDeclaredFieldFromObject;
 public class MovieService {
 
     private final MovieRepository movieRepository;
-    private final MongoTemplate mongoTemplate;
 
-    public MovieService(MovieRepository movieRepository, MongoTemplate mongoTemplate) {
+    public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
-        this.mongoTemplate = mongoTemplate;
+
     }
     public   List<?> searchAndSortAllParamsWithLike(SearchAndSortDto request){
         if (request.getSelectedField() != null){
@@ -39,7 +37,7 @@ public class MovieService {
             query = getAllParamWithLike(getDeclaredFieldFromObject(request.getMovie()));
         }
         query.with(SortedFieldIsNull(request));
-        return mongoTemplate.find(query, Movie.class);
+        return movieRepository.findAllByQuery(query);
     }
     private List<?> searchOneFieldAndSortWithLike(SearchAndSortDto request) {
         Query query = new Query();
@@ -48,7 +46,7 @@ public class MovieService {
         }
         query.with(SortedFieldIsNull(request));
         query.fields().include(request.getSelectedField());
-        List<Movie> list = mongoTemplate.find(query, Movie.class);
+        List<Movie> list = movieRepository.findAllByQuery(query);
 
         return selectOneField(list, request);
     }
@@ -59,7 +57,7 @@ public class MovieService {
         }
         query.with(SortedFieldIsNull(request));
         query.fields().include(request.getSelectedField());
-        List<Movie> list = mongoTemplate.find(query, Movie.class);
+        List<Movie> list = movieRepository.findAllByQuery(query);
 
         return selectOneField(list, request);
     }
@@ -72,7 +70,7 @@ public class MovieService {
             query = getAllParamWithIs(getDeclaredFieldFromObject(request.getMovie()));
         }
         query.with(SortedFieldIsNull(request));
-        return mongoTemplate.find(query, Movie.class);
+        return movieRepository.findAllByQuery(query);
     }
     private Map<String,String> requestToMap(HttpServletRequest request){
         Map<String,String> map = new LinkedHashMap<>();
@@ -85,11 +83,11 @@ public class MovieService {
         return map;
     }
     private PageRequest SortedFieldIsNull(SearchAndSortDto request){
-        PageRequest pageRequest = null;
+        PageRequest pageRequest;
         if (request.getPageableDto() != null ){
             int pageSize = request.getPageableDto().getPageSize() == 0 ? Integer.MAX_VALUE : request.getPageableDto().getPageSize();
             if (request.getPageableDto().getSortedField() != null){
-                SortingDirection sortingDirection = request.getPageableDto().getDirection() == null ? SortingDirection.DESC : request.getPageableDto().getDirection();
+                SortingDirection sortingDirection = request.getPageableDto().getDirection() == null ? SortingDirection.ASC : request.getPageableDto().getDirection();
                 pageRequest = SortingDirection.ASC.name().equals(sortingDirection.name())
                         ? PageRequest.of(request.getPageableDto().getPageNumber(),pageSize, Sort.Direction.ASC,request.getPageableDto().getSortedField())
                         : PageRequest.of(request.getPageableDto().getPageNumber(),pageSize, Sort.Direction.DESC,request.getPageableDto().getSortedField());
@@ -97,6 +95,8 @@ public class MovieService {
             else {
                 pageRequest=PageRequest.of(request.getPageableDto().getPageNumber(),request.getPageableDto().getPageSize());
             }
+        }else {
+            pageRequest = PageRequest.of(0, Integer.MAX_VALUE);
         }
         return pageRequest;
     }
@@ -118,5 +118,9 @@ public class MovieService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return fieldList;
+    }
+
+    public <T> MovieRepositoryCustom.ExecutableUpdateMovie<T> updateMovie(){
+        return movieRepository.update();
     }
 }

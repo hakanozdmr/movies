@@ -10,7 +10,8 @@ import java.util.List;
 
 @Repository
 @EnableMongoRepositories
-public interface MovieRepository extends MongoRepository<Movie, ObjectId> {
+public interface MovieRepository extends MongoRepository<Movie, ObjectId>, MovieRepositoryCustom {
+
          Movie findByImdbId(String id);
 
          List<Movie> findAllByTitle(String title);

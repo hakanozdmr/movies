@@ -28,7 +28,8 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<?> createReview(@RequestBody Map<String,String> payload){
-         reviewService.createReview(payload.get("reviewBody"),payload.get("imdbId"));
+        //TODO: Burayı daha düzenli yaz
+        reviewService.createReview(payload.get("reviewBody"),payload.get("imdbId"));
         Movie movie = new Movie();
         movie.setImdbId(payload.get("imdbId"));
         SearchAndSortDto searchAndSortDto = new SearchAndSortDto();
