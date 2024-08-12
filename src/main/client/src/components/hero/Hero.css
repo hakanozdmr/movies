@@ -69,17 +69,14 @@
         top:20px;
     }
 }
-
-/* Carousel bileşeninin oklarını stilize etmek için */
 .movie-carousel-container .MuiButtonBase-root:hover {
+    background-color: white; /* Arka plan rengini beyaz yapar */
+    color: black;
+}
+/* Carousel bileşeninin oklarını stilize etmek için */
+.movie-carousel-container .css-i4bv87-MuiSvgIcon-root:hover {
     background-color: white; /* Arka plan rengini beyaz yapar */
     border-radius: 50%; /* Okların yuvarlak olmasını sağlar */
     color: black; /* Ok simgelerinin rengini siyah yapar */
-    width: 40px; /* Ok genişliğini ayarlayabilirsiniz */
-    height: 40px; /* Ok yüksekliğini ayarlayabilirsiniz */
-}
 
-/* Okların içindeki simgeler için */
-.movie-carousel-container .MuiSvgIcon-root {
-    font-size: 1.5rem; /* Ok simgelerinin boyutunu ayarlayabilirsiniz */
 }
