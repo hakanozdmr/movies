@@ -10,11 +10,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movies")
+@CrossOrigin(origins = "*")
 public class MovieController{
     MovieService movieService;
 
     public MovieController(MovieService movieService) {
         this.movieService = movieService;
+    }
+
+    @GetMapping
+    public  ResponseEntity<List<?>> getAllMovies(){
+        return new ResponseEntity<>(movieService.findAllMovies(), HttpStatus.OK) ;
     }
     @GetMapping("/searchAndSort")
     public  ResponseEntity<List<?>> searchAndSort(@RequestBody SearchAndSortDto request){

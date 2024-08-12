@@ -28,6 +28,9 @@ public class MovieService {
         this.movieRepository = movieRepository;
 
     }
+    public List<Movie> findAllMovies(){
+        return movieRepository.findAll();
+    }
     public   List<?> searchAndSortAllParamsWithLike(SearchAndSortDto request){
         if (request.getSelectedField() != null){
             return searchOneFieldAndSortWithLike(request);
