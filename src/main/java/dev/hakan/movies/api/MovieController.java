@@ -22,7 +22,7 @@ public class MovieController{
     public  ResponseEntity<List<?>> getAllMovies(){
         return new ResponseEntity<>(movieService.findAllMovies(), HttpStatus.OK) ;
     }
-    @GetMapping("/searchAndSort")
+    @PostMapping("/searchAndSort")
     public  ResponseEntity<List<?>> searchAndSort(@RequestBody SearchAndSortDto request){
             return new ResponseEntity<>(movieService.searchAndSortAllParamsWithLike(request), HttpStatus.OK) ;
     }
