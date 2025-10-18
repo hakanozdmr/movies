@@ -1,33 +1,74 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVideoSlash } from "@fortawesome/free-solid-svg-icons";
+import { faVideoSlash, faUser, faSignOutAlt, faHome, faHeart } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import {NavLink} from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import './Header.css';
 
-const Header = () => {
- 
-return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-        <Container fluid>
-            <Navbar.Brand href="/" style={{"color":'gold'}}>
-                <FontAwesomeIcon icon ={faVideoSlash}/>Gold
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Collapse id="navbarScroll">
-                    <Nav
-                        className="me-auto my-2 my-lg-0"
-                        style={{maxHeight: '100px'}}
-                        navbarScroll
-                    >
-                    <NavLink className ="nav-link" to="/">Home</NavLink>
-                    <NavLink className ="nav-link" to="/watchList">Watch List</NavLink>      
-                </Nav>
-                <Button variant="outline-info" className="me-2">Login</Button>
-                <Button variant="outline-info">Register</Button>
-            </Navbar.Collapse>
-        </Container>
+const Header = ({ user, updateUser }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    updateUser(null);
+    navigate('/');
+  };
+
+  return (
+    <Navbar className="custom-navbar" expand="lg" variant="dark">
+      <Container fluid>
+        <Navbar.Brand className="navbar-brand" href="/">
+          <FontAwesomeIcon icon={faVideoSlash} />
+          <span>Gold Cinema</span>
+        </Navbar.Brand>
+        
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="me-auto my-2 my-lg-0" navbarScroll>
+            <NavLink className="custom-nav-link" to="/">
+              <FontAwesomeIcon icon={faHome} className="me-2" />
+              Ana Sayfa
+            </NavLink>
+            {user && (
+              <NavLink className="custom-nav-link" to="/watchlist">
+                <FontAwesomeIcon icon={faHeart} className="me-2" />
+                İzleme Listem
+              </NavLink>
+            )}
+          </Nav>
+          
+          <div className="d-flex align-items-center flex-wrap">
+            {user ? (
+              <>
+                <div className="user-info">
+                  <FontAwesomeIcon icon={faUser} />
+                  <span>{user.name || user.email}</span>
+                </div>
+                <Button className="logout-button" onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                  Çıkış Yap
+                </Button>
+              </>
+            ) : (
+              <>
+                <NavLink to="/login">
+                  <Button className="auth-button">
+                    Giriş Yap
+                  </Button>
+                </NavLink>
+                <NavLink to="/register">
+                  <Button className="auth-button">
+                    Kayıt Ol
+                  </Button>
+                </NavLink>
+              </>
+            )}
+          </div>
+        </Navbar.Collapse>
+      </Container>
     </Navbar>
   )
 }

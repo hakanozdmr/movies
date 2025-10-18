@@ -8,15 +8,19 @@ import Header from "./components/header/Header";
 import Trailer from "./components/trailer/Trailer";
 import Reviews from "./components/reviews/Reviews";
 import NotFound from "./components/notFound/NotFound";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import Watchlist from "./components/watchlist/Watchlist";
 
 function App() {
   const [movies, setMovies] = useState();
   const [movie, setMovie] = useState();
   const [reviews, setReviews] = useState([]);
+  const [user, setUser] = useState(null);
 
   const getMovies = async () => {
     try {
-      const response = await api.get("/api/v1/movies");
+      const response = await api.get("/movies");
 
       setMovies(response.data);
     } catch (err) {
@@ -26,7 +30,7 @@ function App() {
 
   const getMovieData = async (movieId) => {
     try {
-      const response = await api.post(`/api/v1/movies/searchAndSort`, {
+      const response = await api.post(`/movies/searchAndSort`, {
             movie: {
               imdbId: movieId,
             },
@@ -44,14 +48,27 @@ function App() {
 
   useEffect(() => {
     getMovies();
+    // Check for user on app load
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.isLoggedIn) {
+        setUser(parsedUser);
+      }
+    }
   }, []);
+
+  // Function to update user state from child components
+  const updateUser = (userData) => {
+    setUser(userData);
+  };
 
   return (
     <div className="App">
-      <Header />
+      <Header user={user} updateUser={updateUser} />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home movies={movies} />}></Route>
+          <Route path="/" element={<Home movies={movies} user={user} />}></Route>
           <Route path="/Trailer/:ytTrailerId" element={<Trailer />}></Route>
           <Route
             path="/Reviews/:movieId"
@@ -61,9 +78,13 @@ function App() {
                 movie={movie}
                 reviews={reviews}
                 setReviews={setReviews}
+                user={user}
               />
             }
           ></Route>
+          <Route path="/login" element={<Login updateUser={updateUser} />}></Route>
+          <Route path="/register" element={<Register updateUser={updateUser} />}></Route>
+          <Route path="/watchlist" element={<Watchlist />}></Route>
           <Route path="*" element={<NotFound />}></Route>
         </Route>
       </Routes>

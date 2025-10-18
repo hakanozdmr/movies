@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: movies-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-movieuser}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-moviepass}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-moviesdb}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - movies-network
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: movies-backend
+    restart: unless-stopped
+    environment:
+      MONGO_DATABASE: ${MONGO_DATABASE:-moviesdb}
+      MONGO_USER: ${MONGO_USER:-movieuser}
+      MONGO_PASSWORD: ${MONGO_PASSWORD:-moviepass}
+      MONGO_CLUSTER: ${MONGO_CLUSTER:-localhost}
+      # Override for local MongoDB instance
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_USER:-movieuser}:${MONGO_PASSWORD:-moviepass}@mongodb:27017/${MONGO_DATABASE:-moviesdb}?authSource=admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - movies-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/movies"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # React Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: movies-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - movies-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  movies-network:
+    driver: bridge

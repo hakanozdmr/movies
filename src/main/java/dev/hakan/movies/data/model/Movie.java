@@ -24,6 +24,12 @@ public class Movie {
     private String poster;
     private List<String> genres;
     private List<String> backdrops;
+    private String imdbRating;
+    private String description;
+    private String director;
+    private String cast;
+    private Integer duration; // in minutes
+    private String ageRating;
     @DocumentReference
     private List<Review> reviewIds;
 }

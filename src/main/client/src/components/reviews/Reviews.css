@@ -1,0 +1,849 @@
+/* Main Container */
+.reviews-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #252525 100%);
+    padding: 2rem 0;
+}
+
+/* Movie Header */
+.movie-header {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movie-poster-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.movie-poster:hover {
+    transform: scale(1.05);
+}
+
+.movie-info {
+    padding-left: 2rem;
+}
+
+.movie-title {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.movie-genres {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.genre-tag {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+.imdb-rating {
+    background: linear-gradient(45deg, #f5c842, #ffd700);
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(245, 200, 66, 0.3);
+}
+
+/* Enhanced Movie Header Styles */
+.movie-meta-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.movie-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5c842 0%, #ffd700 50%, #ffed4e 100%);
+    color: #000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 
+        0 4px 15px rgba(245, 200, 66, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    min-width: 120px;
+    transition: all 0.3s ease;
+}
+
+.movie-rating::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.movie-rating:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 20px rgba(245, 200, 66, 0.5),
+        0 3px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.movie-rating:hover::before {
+    left: 100%;
+}
+
+.movie-rating .rating-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: 0.75rem;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.movie-rating .rating-value {
+    font-size: 1.3rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.release-year,
+.duration,
+.age-rating {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.release-year {
+    background: rgba(229, 9, 20, 0.8);
+    border-color: rgba(229, 9, 20, 1);
+    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+}
+
+.duration {
+    background: rgba(109, 109, 110, 0.8);
+    border-color: rgba(109, 109, 110, 1);
+    box-shadow: 0 4px 12px rgba(109, 109, 110, 0.3);
+}
+
+.age-rating {
+    background: rgba(0, 255, 0, 0.2);
+    color: #00ff00;
+    border-color: rgba(0, 255, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.2);
+}
+
+/* Movie Description */
+.movie-description {
+    margin-bottom: 1.5rem;
+}
+
+.description-text {
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0;
+    text-align: justify;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border-left: 4px solid #ffd700;
+    backdrop-filter: blur(5px);
+}
+
+/* Crew Information */
+.movie-crew-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.crew-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.crew-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.crew-label {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 100px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.crew-value {
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Reviews Section */
+.reviews-section {
+    margin-top: 3rem;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-title {
+    color: #ffffff;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.title-icon {
+    font-size: 2.5rem;
+}
+
+/* Review Form Section */
+.review-form-section {
+    margin-bottom: 3rem;
+}
+
+.review-form-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h4 {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: #cccccc;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Login Prompt */
+.login-prompt {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 237, 78, 0.05));
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.prompt-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.login-prompt h4 {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.login-prompt p {
+    color: #cccccc;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.login-btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(255, 215, 0, 0.4);
+    color: #000;
+    text-decoration: none;
+}
+
+/* Reviews List */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Review Card */
+.review-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.review-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.reviewer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.reviewer-name {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.review-date {
+    color: #999;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.review-content {
+    margin-left: 4rem;
+}
+
+.review-content p {
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin: 0;
+    text-align: justify;
+}
+
+/* No Reviews */
+.no-reviews {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.no-reviews-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+}
+
+.no-reviews h4 {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.no-reviews p {
+    color: #cccccc;
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reviews-container {
+        padding: 1rem 0;
+    }
+    
+    .movie-header {
+        padding: 1.5rem;
+    }
+    
+    .movie-info {
+        padding-left: 0;
+        margin-top: 1.5rem;
+    }
+    
+    .movie-title {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Enhanced Movie Header Responsive */
+    .movie-meta-info {
+        justify-content: center;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .movie-rating {
+        padding: 0.6rem 1.2rem;
+        min-width: 100px;
+    }
+
+    .movie-rating .rating-label {
+        font-size: 0.7rem;
+        margin-right: 0.5rem;
+    }
+
+    .movie-rating .rating-value {
+        font-size: 1.1rem;
+    }
+
+    .release-year,
+    .duration,
+    .age-rating {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .movie-genres {
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .description-text {
+        font-size: 1rem;
+        padding: 1.2rem;
+        text-align: left;
+    }
+
+    .movie-crew-info {
+        gap: 0.8rem;
+    }
+
+    .crew-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.8rem;
+    }
+
+    .crew-label {
+        min-width: auto;
+        font-size: 0.9rem;
+    }
+
+    .crew-value {
+        font-size: 0.95rem;
+        width: 100%;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .review-form-card {
+        padding: 1.5rem;
+    }
+    
+    .review-card {
+        padding: 1.5rem;
+    }
+    
+    .review-content {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+    
+    .reviewer-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-title {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+    }
+    
+    .reviewer-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .reviewer-name {
+        font-size: 1.1rem;
+    }
+    
+    .review-content p {
+        font-size: 1rem;
+    }
+}
+
+/* Enhanced Review Styles */
+.form-type-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.form-type-btn {
+    border-radius: 20px !important;
+    font-size: 0.9rem !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-type-btn.btn-primary {
+    background: linear-gradient(45deg, #ffd700, #ffed4e) !important;
+    border-color: #ffd700 !important;
+    color: #000 !important;
+}
+
+.form-type-btn.btn-outline-primary {
+    border-color: rgba(255, 215, 0, 0.6) !important;
+    color: rgba(255, 215, 0, 0.8) !important;
+}
+
+.form-type-btn.btn-outline-primary:hover {
+    background: rgba(255, 215, 0, 0.1) !important;
+    border-color: #ffd700 !important;
+    color: #ffd700 !important;
+}
+
+/* Review Card Enhancements */
+.review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.3rem;
+}
+
+.review-type-badge, .recommendation-badge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 12px !important;
+}
+
+.review-title {
+    margin-bottom: 1rem;
+}
+
+.review-title h6 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Review Rating Display */
+.review-rating {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+    border-left: 4px solid #ffd700;
+}
+
+.review-rating .rating-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stars-display {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex-wrap: wrap;
+}
+
+.stars-display .star {
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+.stars-display .star.filled {
+    filter: brightness(1.3) drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+}
+
+.stars-display .rating-value {
+    color: #ffffff;
+    font-weight: 700;
+    margin-left: 0.8rem;
+    font-size: 1rem;
+    background: rgba(255, 215, 0, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+}
+
+/* Review Tags */
+.review-tags {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.review-tag {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-size: 0.8rem !important;
+    padding: 0.3rem 0.7rem !important;
+    border-radius: 15px !important;
+    transition: all 0.3s ease;
+}
+
+.review-tag:hover {
+    background: rgba(255, 215, 0, 0.2) !important;
+    border-color: rgba(255, 215, 0, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+/* Review Voting */
+.review-voting {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.helpful-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.voting-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.vote-btn {
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.8rem !important;
+    transition: all 0.3s ease !important;
+    border-width: 1px !important;
+}
+
+.vote-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .form-type-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .form-type-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .review-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    
+    .review-voting {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+    
+    .voting-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .vote-btn {
+        flex: 1;
+        max-width: 120px;
+    }
+    
+    .stars-display {
+        justify-content: center;
+    }
+    
+    .rating-value {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .movie-title {
+        font-size: 1.8rem;
+    }
+
+    .movie-meta-info {
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .movie-rating,
+    .release-year,
+    .duration,
+    .age-rating {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .description-text {
+        font-size: 0.95rem;
+        padding: 1rem;
+        line-height: 1.6;
+    }
+
+    .crew-item {
+        padding: 0.6rem;
+    }
+
+    .crew-label {
+        font-size: 0.85rem;
+    }
+
+    .crew-value {
+        font-size: 0.9rem;
+    }
+
+    .review-tags {
+        justify-content: center;
+    }
+    
+    .review-rating {
+        text-align: center;
+    }
+    
+    .helpful-text {
+        text-align: center;
+        width: 100%;
+    }
+}
