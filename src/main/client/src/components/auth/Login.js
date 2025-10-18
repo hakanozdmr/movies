@@ -23,16 +23,8 @@ const Login = ({ updateUser }) => {
   const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com';
   const { isLoaded, initializeGoogleSignIn, renderGoogleSignInButton } = useGoogleAuth(GOOGLE_CLIENT_ID);
 
-  // Log Google Client ID configuration for debugging
   useEffect(() => {
-    console.log('Google Client ID configured:', GOOGLE_CLIENT_ID);
-    console.log('Environment variable REACT_APP_GOOGLE_CLIENT_ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID);
-    console.log('Using test mode:', GOOGLE_CLIENT_ID.includes('test-client-id') || GOOGLE_CLIENT_ID.includes('your-google-client-id'));
-    
-    if (GOOGLE_CLIENT_ID.includes('test-client-id') || GOOGLE_CLIENT_ID.includes('your-google-client-id')) {
-      console.warn('Using TEST Google Client ID. Replace with real Client ID from Google Cloud Console.');
-      console.warn('To fix this, set REACT_APP_GOOGLE_CLIENT_ID environment variable or create .env file in src/main/client/');
-    }
+    // Initialize Google Sign-In when component mounts
   }, [GOOGLE_CLIENT_ID]);
 
   const handleChange = (e) => {
@@ -77,8 +69,6 @@ const Login = ({ updateUser }) => {
     setError('');
 
     try {
-      console.log('Attempting Google login with credential:', response.credential?.substring(0, 20) + '...');
-      
       const backendResponse = await authApi.loginWithGoogle(response.credential);
       
       if (backendResponse.success) {
@@ -94,11 +84,9 @@ const Login = ({ updateUser }) => {
         updateUser(userData);
         navigate('/');
       } else {
-        console.error('Google login failed:', backendResponse.message);
         setError(backendResponse.message || 'Google ile giriş yapılamadı.');
       }
     } catch (err) {
-      console.error('Google login error:', err);
       const errorMessage = err.response?.data?.message || 
                           err.message || 
                           'Sunucu hatası. Lütfen tekrar deneyin.';
