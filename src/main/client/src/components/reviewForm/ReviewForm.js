@@ -1,8 +1,10 @@
 import {Form, Button, Row, Col, FormCheck} from 'react-bootstrap';
 import {useState, useRef} from 'react';
+import { useTranslation } from 'react-i18next';
 import './ReviewForm.css';
 
 const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed = false, onDetailedSubmit}) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [rating, setRating] = useState(5);
   const [reviewType, setReviewType] = useState('non-spoiler');
@@ -13,7 +15,7 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
   const titleRef = useRef();
   const tagsRef = useRef();
 
-  const predefinedTags = ['#action', '#drama', '#comedy', '#recommendation', '#must-watch', '#awesome', '#amazing', '#boring', '#disappointing'];
+  const predefinedTags = t('reviewForm.predefinedTags', { returnObjects: true });
 
   const handleTagToggle = (tag) => {
     if (selectedTags.includes(tag)) {
@@ -40,7 +42,7 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
   const renderStarRating = () => {
     return (
       <div className="star-rating">
-        <Form.Label className="rating-label">Rating (1-10)</Form.Label>
+        <Form.Label className="rating-label">Puanlama (1-10)</Form.Label>
         <div className="stars-container">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
             <button
@@ -64,11 +66,11 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
         <Row>
           <Col md={12}>
             <Form.Group className="mb-3" controlId="reviewTitle">
-              <Form.Label className="form-label">Review Title</Form.Label>
+              <Form.Label className="form-label">{t('reviewForm.reviewTitle')}</Form.Label>
               <Form.Control
                 ref={titleRef}
                 type="text"
-                placeholder="Give your review a catchy title..."
+                placeholder="Yorumunuz için çarpıcı bir başlık verin..."
                 className="review-title-input"
               />
             </Form.Group>
@@ -81,36 +83,36 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
           </Col>
           <Col md={6}>
             <Form.Group className="mb-3" controlId="reviewType">
-              <Form.Label className="form-label">Review Type</Form.Label>
+              <Form.Label className="form-label">Yorum Tipi</Form.Label>
               <Form.Select
                 value={reviewType}
                 onChange={(e) => setReviewType(e.target.value)}
                 className="review-type-select"
               >
-                <option value="non-spoiler">No Spoilers</option>
-                <option value="spoiler">Contains Spoilers</option>
+                <option value="non-spoiler">Spoiler İçermez</option>
+                <option value="spoiler">Spoiler İçerir</option>
               </Form.Select>
             </Form.Group>
           </Col>
         </Row>
 
         <Form.Group className="mb-3" controlId="reviewTextarea">
-          <Form.Label className="form-label">{labelText || "Your Review"}</Form.Label>
+          <Form.Label className="form-label">{labelText || "Yorumunuz"}</Form.Label>
           <Form.Control 
             ref={revText} 
             as="textarea" 
             rows={5} 
             defaultValue={defaultValue}
             className="review-textarea"
-            placeholder="Share your detailed thoughts about this movie..."
+            placeholder="Bu film hakkındaki detaylı düşüncelerinizi paylaşın..."
           />
           <div className="form-char-count">
-            <small>Be detailed in your review to help other viewers!</small>
+            <small>Diğer izleyicilere yardımcı olmak için yorumunuzda detaylı olun!</small>
           </div>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="reviewTags">
-          <Form.Label className="form-label">Tags</Form.Label>
+          <Form.Label className="form-label">Etiketler</Form.Label>
           <div className="tags-container">
             {predefinedTags.map((tag) => (
               <button
@@ -130,7 +132,7 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
             <Form.Group className="mb-3" controlId="isRecommended">
               <Form.Check
                 type="checkbox"
-                label="I recommend this movie"
+                label="Bu filmi tavsiye ediyorum"
                 checked={isRecommended}
                 onChange={(e) => setIsRecommended(e.target.checked)}
                 className="recommendation-check"
@@ -146,7 +148,7 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
             className="submit-detailed-review-btn"
           >
             <span className="btn-icon">✨</span>
-            Submit Detailed Review
+            Detaylı Yorum Gönder
           </Button>
         </div>
       </Form>
@@ -164,10 +166,10 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
                 rows={4} 
                 defaultValue={defaultValue}
                 className="review-textarea"
-                placeholder="Share your thoughts about this movie..."
+                placeholder={t('reviewForm.simplePlaceholder')}
             />
             <div className="form-char-count">
-                <small>Tell us what you think!</small>
+                <small>{t('reviewForm.tellUsWhatYouThink')}</small>
             </div>
         </Form.Group>
         <div className="form-actions">
@@ -177,7 +179,7 @@ const ReviewForm = ({handleSubmit, revText, labelText, defaultValue, isDetailed 
                 className="submit-review-btn"
             >
                 <span className="btn-icon">🚀</span>
-                Submit Review
+{t('reviewForm.submitReview')}
             </Button>
         </div>
     </Form>   

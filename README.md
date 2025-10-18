@@ -7,7 +7,7 @@ Modern, full-stack bir film takip ve değerlendirme uygulaması. React ve Spring
 ### 🎯 Ana Özellikler
 - **Film Kataloğu**: Geniş film koleksiyonu ile arama ve filtreleme
 - **Trailer Oynatma**: Netflix benzeri arayüz ile YouTube trailer entegrasyonu
-- **Kullanıcı Sistemi**: Kayıt, giriş yapma ve profil yönetimi
+- **Kullanıcı Sistemi**: Kayıt, giriş yapma, Google OAuth ve profil yönetimi
 - **Değerlendirme Sistemi**: Detaylı film yorumları ve puanlama
 - **İzleme Listesi**: Kişisel film listesi oluşturma ve yönetme
 - **Responsive Tasarım**: Tüm cihazlarda uyumlu modern arayüz
@@ -63,7 +63,16 @@ movies/
    ```bash
    cp env.example .env
    ```
-   `.env` dosyasını MongoDB ayarlarınızla düzenleyin.
+   `.env` dosyasını MongoDB ve Google OAuth ayarlarınızla düzenleyin:
+   ```env
+   MONGO_DATABASE=moviesdb
+   MONGO_USER=movieuser
+   MONGO_PASSWORD=moviepass
+   MONGO_CLUSTER=localhost
+   GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   REACT_APP_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+   ```
 
 3. **Uygulamayı başlatın**
    ```bash
@@ -111,6 +120,7 @@ npm start
 |--------|----------|-------------|
 | POST | `/auth/register` | Kullanıcı kaydı |
 | POST | `/auth/login` | Kullanıcı girişi |
+| POST | `/auth/google` | Google ile giriş |
 
 **Register Request:**
 ```json
@@ -118,6 +128,21 @@ npm start
   "name": "John Doe",
   "email": "john@example.com",
   "password": "password123"
+}
+```
+
+**Login Request:**
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Google Login Request:**
+```json
+{
+  "idToken": "google-id-token-from-client"
 }
 ```
 
@@ -183,6 +208,41 @@ src/test/performance/run-performance-tests.sh
 - **API Tests**: Endpoint performans testleri
 - **Database Tests**: Veritabanı performans testleri
 
+## 🔧 Google OAuth Kurulumu
+
+Google OAuth entegrasyonu için aşağıdaki adımları takip edin:
+
+### 1. Google Cloud Console Ayarları
+
+1. [Google Cloud Console](https://console.cloud.google.com/)'a gidin
+2. Yeni proje oluşturun veya mevcut projeyi seçin
+3. **APIs & Services > Credentials** bölümüne gidin
+4. **Create Credentials > OAuth 2.0 Client IDs** seçin
+5. Application type olarak **Web application** seçin
+6. **Authorized JavaScript origins** kısmına ekleyin:
+   - `http://localhost:3000` (development)
+   - `https://yourdomain.com` (production)
+7. **Authorized redirect URIs** kısmına ekleyin:
+   - `http://localhost:3000` (development)
+8. Client ID ve Client Secret'i kopyalayın
+
+### 2. Environment Variables Ayarlama
+
+`.env` dosyanızı aşağıdaki gibi düzenleyin:
+
+```env
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+REACT_APP_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+```
+
+### 3. Test Etme
+
+1. Uygulamayı başlatın: `docker-compose up --build`
+2. http://localhost:3000/login adresine gidin
+3. "Google ile Giriş Yap" butonuna tıklayın
+4. Google hesabınızla giriş yapın
+
 ## 🐳 Docker & Deployment
 
 ### Environment Variables
@@ -193,6 +253,9 @@ src/test/performance/run-performance-tests.sh
 | `MONGO_USER` | movieuser | MongoDB kullanıcı adı |
 | `MONGO_PASSWORD` | moviepass | MongoDB şifresi |
 | `MONGO_CLUSTER` | localhost | MongoDB cluster URL |
+| `GOOGLE_CLIENT_ID` | - | Google OAuth Client ID |
+| `GOOGLE_CLIENT_SECRET` | - | Google OAuth Client Secret |
+| `REACT_APP_GOOGLE_CLIENT_ID` | - | Frontend Google Client ID |
 
 ### Docker Commands
 ```bash

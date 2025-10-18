@@ -27,6 +27,11 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime lastLoginAt;
     
+    // OAuth2 Google fields
+    private String googleId;
+    private String picture;
+    private String provider = "local"; // "local" or "google"
+    
     // Watchlist için referans
     private List<String> watchlistMovieIds;
 }

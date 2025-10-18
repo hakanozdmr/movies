@@ -1,4 +1,5 @@
 import "./App.css";
+import "./i18n";
 import api from "./api/axiosConfig";
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";

@@ -6,6 +6,7 @@ import { faCirclePlay, faVolumeMute, faVolumeUp, faHeart } from '@fortawesome/fr
 import { useNavigate} from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import TrailerModal from '../trailer/TrailerModal';
 import BackgroundTrailer from '../trailer/BackgroundTrailer';
 import NotificationPopup from '../ui/NotificationPopup';
@@ -14,6 +15,7 @@ import { watchlistApi } from '../../api/watchlistApi';
 
 const Hero = ({movies, user}) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [selectedTrailer, setSelectedTrailer] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [backgroundTrailerId, setBackgroundTrailerId] = useState(null);
@@ -113,8 +115,8 @@ const Hero = ({movies, user}) => {
                     
                     const action = isInWatchlist ? 'removed' : 'added';
                     const message = isInWatchlist 
-                        ? `${movie.title} izleme listenizden çıkarıldı!` 
-                        : `${movie.title} izleme listenize eklendi!`;
+                        ? `${movie.title} ${t('watchlist.removedFromList')}` 
+                        : `${movie.title} ${t('watchlist.addedToList')}`;
                     
                     showNotification(message, 'success', action);
                 } else {
@@ -315,13 +317,12 @@ const Hero = ({movies, user}) => {
                           </div>
 
                           {/* Title */}
-                          <h1 className="hero-title">{movie.title || 'Untitled Movie'}</h1>
+                          <h1 className="hero-title">{movie.title || t('hero.untitledMovie')}</h1>
 
                           {/* Description */}
                           <div className="hero-description">
                             <p>
-                              {movie.description || 
-                               "Experience the ultimate cinematic journey with this incredible story that will keep you on the edge of your seat."}
+                              {movie.description || t('hero.defaultDescription')}
                             </p>
                           </div>
 
@@ -329,13 +330,13 @@ const Hero = ({movies, user}) => {
                           <div className="movie-additional-info">
                             {movie.director && (
                               <div className="movie-info-item">
-                                <span className="info-label">Yönetmen:</span>
+                                <span className="info-label">{t('reviews.director')}</span>
                                 <span className="info-value">{movie.director}</span>
                               </div>
                             )}
                             {movie.cast && (
                               <div className="movie-info-item">
-                                <span className="info-label">Oyuncular:</span>
+                                <span className="info-label">{t('reviews.cast')}</span>
                                 <span className="info-value">
                                   {movie.cast.length > 100 ? movie.cast.substring(0, 100) + '...' : movie.cast}
                                 </span>
@@ -348,14 +349,14 @@ const Hero = ({movies, user}) => {
                               onClick={() => openTrailerModal(movie)}
                             >
                               <FontAwesomeIcon icon={faCirclePlay} className="play-icon" />
-                              <span>Play</span>
+                              <span>{t('hero.play')}</span>
                             </button>
                             <button 
                               className="netflix-info-btn"
                               onClick={() => reviews(movie.imdbId)}
                             >
                               <span>ℹ</span>
-                              <span>More Info</span>
+                              <span>{t('hero.moreInfo')}</span>
                             </button>
                             {user && (() => {
                               const isInWatchlist = Boolean(movieWatchlistStatus[movie.imdbId]);
@@ -369,7 +370,7 @@ const Hero = ({movies, user}) => {
                                     className={isInWatchlist ? 'filled-heart' : ''}
                                   />
                                   <span>
-                                    {isInWatchlist ? 'Listem' : 'Listeye Ekle'}
+                                    {isInWatchlist ? t('hero.inList') : t('hero.addToList')}
                                   </span>
                                 </button>
                               );
@@ -396,7 +397,7 @@ const Hero = ({movies, user}) => {
                       {index !== activeSlideIndex && (
                         <div className="movie-detail">
                           <div className="movie-poster">
-                            <img src={movie.poster} alt={movie.title || 'Movie'} />
+                            <img src={movie.poster} alt={movie.title || 'Film'} />
                           </div>
                         </div>
                       )}
@@ -415,7 +416,7 @@ const Hero = ({movies, user}) => {
         isOpen={isModalOpen}
         onClose={closeTrailerModal}
         trailerId={selectedTrailer?.id}
-        title={selectedTrailer?.title || (movies && movies[activeSlideIndex] ? movies[activeSlideIndex].title : null) || "Movie Trailer"}
+        title={selectedTrailer?.title || (movies && movies[activeSlideIndex] ? movies[activeSlideIndex].title : null) || t('hero.movieTrailer')}
       />
 
       {/* Notification Popup */}

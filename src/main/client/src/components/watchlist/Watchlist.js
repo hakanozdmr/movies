@@ -3,10 +3,12 @@ import { Container, Row, Col, Card, Button, Alert, Spinner } from 'react-bootstr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { watchlistApi } from '../../api/watchlistApi';
 import './Watchlist.css';
 
 const Watchlist = () => {
+  const { t } = useTranslation();
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -95,9 +97,9 @@ const Watchlist = () => {
         <Container>
           <div className="text-center py-5">
             <Spinner animation="border" role="status">
-              <span className="visually-hidden">Yükleniyor...</span>
+              <span className="visually-hidden">{t('common.loading')}</span>
             </Spinner>
-            <p className="mt-3">Watchlist yükleniyor...</p>
+            <p className="mt-3">{t('watchlist.loading')}</p>
           </div>
         </Container>
       </div>
@@ -110,20 +112,20 @@ const Watchlist = () => {
         <div className="watchlist-header">
           <h1 className="watchlist-title">
             <FontAwesomeIcon icon={faHeart} className="me-2" />
-            İzleme Listem
+{t('watchlist.title')}
           </h1>
           <p className="watchlist-subtitle">
-            {user?.email} için kaydedilen filmler
+{t('watchlist.subtitle')} {user?.email}
           </p>
         </div>
 
         {watchlist.length === 0 ? (
           <div className="text-center py-5">
             <FontAwesomeIcon icon={faHeart} size="3x" className="text-muted mb-3" />
-            <h3 className="text-muted">Liste boş</h3>
-            <p className="text-muted">Henüz izleme listenize film eklememişsiniz.</p>
+            <h3 className="text-muted">{t('watchlist.emptyList')}</h3>
+            <p className="text-muted">{t('watchlist.noMoviesAdded')}</p>
             <Button variant="primary" onClick={() => navigate('/')}>
-              Film Keşfet
+              {t('watchlist.discoverMovies')}
             </Button>
           </div>
         ) : (

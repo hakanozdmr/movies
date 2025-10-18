@@ -2,14 +2,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player/youtube';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 import './Trailer.css';
 import React, { useEffect, useState } from 'react';
 
 const Trailer = () => {
+    const { t } = useTranslation();
     const params = useParams();
     const navigate = useNavigate();
     const key = params.ytTrailerId;
-    const [movieTitle, setMovieTitle] = useState("Movie Trailer");
+    const [movieTitle, setMovieTitle] = useState(t('hero.movieTrailer'));
 
     // Go back to previous page
     const goBack = () => {
@@ -33,7 +35,7 @@ const Trailer = () => {
             <div className="trailer-controls">
                 <button className="trailer-back-btn" onClick={goBack}>
                     <FontAwesomeIcon icon={faArrowLeft} />
-                    Back
+{t('common.back')}
                 </button>
             </div>
             

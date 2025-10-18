@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import './TrailerModal.css';
 
-const TrailerModal = ({ isOpen, onClose, trailerId, title = "Movie Trailer" }) => {
+const TrailerModal = ({ isOpen, onClose, trailerId, title = "Film Fragmanı" }) => {
   
   useEffect(() => {
     // Close modal on Escape key press

@@ -1,7 +1,9 @@
 package dev.hakan.movies.api;
 
 import dev.hakan.movies.business.service.AuthService;
+import dev.hakan.movies.business.service.GoogleAuthService;
 import dev.hakan.movies.data.dto.AuthResponse;
+import dev.hakan.movies.data.dto.GoogleAuthRequest;
 import dev.hakan.movies.data.dto.LoginRequest;
 import dev.hakan.movies.data.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final AuthService authService;
+    private final GoogleAuthService googleAuthService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, GoogleAuthService googleAuthService) {
         this.authService = authService;
+        this.googleAuthService = googleAuthService;
     }
 
     @PostMapping("/register")
@@ -42,6 +46,27 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> loginWithGoogle(@Valid @RequestBody GoogleAuthRequest request) {
+        try {
+            AuthResponse response = googleAuthService.authenticateWithGoogle(request.getIdToken());
+            
+            if (response.isSuccess()) {
+                return ResponseEntity.ok(response);
+            } else {
+                // Return 400 Bad Request for validation errors, 401 for auth failures
+                if (response.getMessage().contains("required") || response.getMessage().contains("configured")) {
+                    return ResponseEntity.badRequest().body(response);
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(AuthResponse.error("Google authentication failed: " + e.getMessage()));
         }
     }
 }

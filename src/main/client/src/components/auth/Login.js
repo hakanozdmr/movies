@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 import { authApi } from '../../api/authApi';
+import useGoogleAuth from '../../hooks/useGoogleAuth';
 import './Auth.css';
 
 const Login = ({ updateUser }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -14,6 +17,23 @@ const Login = ({ updateUser }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // Google OAuth configuration - TEST MODE
+  // Replace with your actual Google Client ID from Google Cloud Console
+  const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com';
+  const { isLoaded, initializeGoogleSignIn, renderGoogleSignInButton } = useGoogleAuth(GOOGLE_CLIENT_ID);
+
+  // Log Google Client ID configuration for debugging
+  useEffect(() => {
+    console.log('Google Client ID configured:', GOOGLE_CLIENT_ID);
+    console.log('Environment variable REACT_APP_GOOGLE_CLIENT_ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID);
+    console.log('Using test mode:', GOOGLE_CLIENT_ID.includes('test-client-id') || GOOGLE_CLIENT_ID.includes('your-google-client-id'));
+    
+    if (GOOGLE_CLIENT_ID.includes('test-client-id') || GOOGLE_CLIENT_ID.includes('your-google-client-id')) {
+      console.warn('Using TEST Google Client ID. Replace with real Client ID from Google Cloud Console.');
+      console.warn('To fix this, set REACT_APP_GOOGLE_CLIENT_ID environment variable or create .env file in src/main/client/');
+    }
+  }, [GOOGLE_CLIENT_ID]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +72,58 @@ const Login = ({ updateUser }) => {
     }
   };
 
+  const handleGoogleSignIn = useCallback(async (response) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('Attempting Google login with credential:', response.credential?.substring(0, 20) + '...');
+      
+      const backendResponse = await authApi.loginWithGoogle(response.credential);
+      
+      if (backendResponse.success) {
+        const userData = {
+          email: backendResponse.email,
+          name: backendResponse.name,
+          userId: backendResponse.userId,
+          token: backendResponse.token,
+          isLoggedIn: true,
+          provider: 'google'
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        updateUser(userData);
+        navigate('/');
+      } else {
+        console.error('Google login failed:', backendResponse.message);
+        setError(backendResponse.message || 'Google ile giriş yapılamadı.');
+      }
+    } catch (err) {
+      console.error('Google login error:', err);
+      const errorMessage = err.response?.data?.message || 
+                          err.message || 
+                          'Sunucu hatası. Lütfen tekrar deneyin.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [updateUser, navigate]);
+
+  useEffect(() => {
+    if (isLoaded && initializeGoogleSignIn && handleGoogleSignIn) {
+      initializeGoogleSignIn(handleGoogleSignIn);
+    }
+  }, [isLoaded, initializeGoogleSignIn, handleGoogleSignIn]);
+
+  useEffect(() => {
+    if (isLoaded && renderGoogleSignInButton) {
+      // Small delay to ensure DOM element is ready
+      const timer = setTimeout(() => {
+        renderGoogleSignInButton('google-signin-button');
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded, renderGoogleSignInButton]);
+
   return (
     <div className="auth-container">
       <Container>
@@ -60,8 +132,8 @@ const Login = ({ updateUser }) => {
             <Card className="auth-card">
               <Card.Body>
                 <div className="auth-header">
-                  <h2 className="auth-title">Giriş Yap</h2>
-                  <p className="auth-subtitle">Hesabınıza giriş yapın</p>
+                  <h2 className="auth-title">{t('auth.loginTitle')}</h2>
+                  <p className="auth-subtitle">{t('auth.loginSubtitle')}</p>
                 </div>
 
                 {error && <Alert variant="danger">{error}</Alert>}
@@ -70,14 +142,14 @@ const Login = ({ updateUser }) => {
                   <Form.Group className="mb-4">
                     <Form.Label>
                       <FontAwesomeIcon icon={faEnvelope} className="me-2" />
-                      Email Adresiniz
+{t('auth.email')}
                     </Form.Label>
                     <Form.Control
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="ornek@email.com"
+                      placeholder={t('auth.emailPlaceholder')}
                       required
                     />
                   </Form.Group>
@@ -85,14 +157,14 @@ const Login = ({ updateUser }) => {
                   <Form.Group className="mb-4">
                     <Form.Label>
                       <FontAwesomeIcon icon={faLock} className="me-2" />
-                      Şifreniz
+{t('auth.password')}
                     </Form.Label>
                     <Form.Control
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      placeholder="Şifrenizi girin"
+                      placeholder={t('auth.passwordPlaceholder')}
                       required
                     />
                   </Form.Group>
@@ -104,13 +176,23 @@ const Login = ({ updateUser }) => {
                     disabled={loading}
                   >
                     <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-                    {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+                    {loading ? t('common.loading') : t('auth.loginTitle')}
                   </Button>
                 </Form>
 
+                <div className="auth-divider">
+                  <hr />
+                  <span className="divider-text">{t('auth.or')}</span>
+                  <hr />
+                </div>
+
+                <div className="google-signin-container">
+                  <div id="google-signin-button"></div>
+                </div>
+
                 <div className="auth-footer">
                   <p className="text-center mt-3">
-                    Hesabınız yok mu? <Link to="/register">Kayıt olun</Link>
+{t('auth.noAccount')} <Link to="/register">{t('navbar.register')}</Link>
                   </p>
                 </div>
               </Card.Body>

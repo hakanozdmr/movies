@@ -43,6 +43,18 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
+        // Log detailed error information for debugging
+        console.error('HTTP Error:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            url: error.config?.url,
+            method: error.config?.method
+        });
+
+        if (error.response?.status === 400) {
+            console.error('400 Bad Request - Check request data and server configuration');
+        }
         if (error.response?.status === 403) {
             console.error('403 Forbidden - Check CORS and permissions');
             // Optionally redirect to login or show error message

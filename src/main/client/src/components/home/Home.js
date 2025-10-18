@@ -1,43 +1,31 @@
 import Hero from '../hero/Hero'
 import { Container, Row, Col, Card } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import './Home.css'
 
 const Home = ({movies, user}) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [movieWatchlistStatus, setMovieWatchlistStatus] = useState({})
+  const moviesRef = useRef(movies)
+  const userRef = useRef(user)
 
-  // Don't render until movies are loaded
-  if (!movies || movies.length === 0) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh', 
-        color: 'white',
-        fontSize: '18px'
-      }}>
-        Loading movies...
-      </div>
-    );
-  }
-
-  const goToMovieReviews = (movieId) => {
-    navigate(`/Reviews/${movieId}`)
-  }
+  // Update refs when props change
+  moviesRef.current = movies
+  userRef.current = user
 
   // Check watchlist status for movies (similar to Hero component)
   useEffect(() => {
-    if (!user || !movies) return
-    
     const checkWatchlistStatus = async () => {
+      if (!userRef.current || !moviesRef.current || !Array.isArray(moviesRef.current)) return
+      
       try {
         const watchlistApi = (await import('../api/authApi')).watchlistApi
-        const statusPromises = movies.map(async (movie) => {
+        const statusPromises = moviesRef.current.map(async (movie) => {
           try {
-            const response = await watchlistApi.checkInWatchlist(user.userId, movie.imdbId)
+            const response = await watchlistApi.checkInWatchlist(userRef.current.userId, movie.imdbId)
             const isInWatchlist = Boolean(response?.inWatchlist)
             return { movieId: movie.imdbId, isInWatchlist }
           } catch (error) {
@@ -58,7 +46,27 @@ const Home = ({movies, user}) => {
     }
 
     checkWatchlistStatus()
-  }, [user, movies])
+  }, [user?.userId, movies?.length]) // Only depend on user ID and movies length, not the entire objects
+
+  const goToMovieReviews = (movieId) => {
+    navigate(`/Reviews/${movieId}`)
+  }
+
+  // Don't render until movies are loaded
+  if (!movies || movies.length === 0) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        color: 'white',
+        fontSize: '18px'
+      }}>
+{t('home.loadingMovies')}
+      </div>
+    );
+  }
 
   return (
     <div className="home-container">
@@ -69,8 +77,8 @@ const Home = ({movies, user}) => {
       <div className="all-movies-section">
         <Container>
           <div className="movies-section-header">
-            <h2 className="section-title">All Movies</h2>
-            <p className="section-subtitle">Discover our complete collection</p>
+            <h2 className="section-title">{t('home.allMovies')}</h2>
+            <p className="section-subtitle">{t('home.discoverCollection')}</p>
           </div>
           
           <Row className="movies-grid">

@@ -2,13 +2,14 @@ import {useEffect, useRef, useState} from 'react';
 import api from '../../api/axiosConfig';
 import {useParams} from 'react-router-dom';
 import {Container, Row, Col, Button, Badge} from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import ReviewForm from '../reviewForm/ReviewForm';
 import './Reviews.css';
 
 import React from 'react'
 
 const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
-
+    const { t } = useTranslation();
     const revText = useRef();
     const [showDetailedForm, setShowDetailedForm] = useState(false);
     let params = useParams();
@@ -48,12 +49,12 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
         const rev = revText.current;
 
         if (!user) {
-            alert('Please login to write a review');
+            alert(t('reviews.loginError'));
             return;
         }
 
         if (!rev.value.trim()) {
-            alert('Please enter a review text');
+            alert(t('reviews.enterReviewText'));
             return;
         }
 
@@ -81,18 +82,18 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
         catch(err)
         {
             console.error(err);
-            alert('Error adding review. Please try again.');
+            alert(t('reviews.reviewError'));
         }
     }
 
     const addDetailedReview = async (reviewData) => {
         if (!user) {
-            alert('Please login to write a review');
+            alert(t('reviews.loginError'));
             return;
         }
 
         if (!reviewData.reviewBody.trim()) {
-            alert('Please enter a review text');
+            alert(t('reviews.enterReviewText'));
             return;
         }
 
@@ -124,7 +125,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
             }
         } catch (err) {
             console.error(err);
-            alert('Error adding detailed review. Please try again.');
+            alert(t('reviews.detailedReviewError'));
         }
     };
 
@@ -203,13 +204,13 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                 <div className="movie-crew-info">
                   {movie?.director && (
                     <div className="crew-item">
-                      <span className="crew-label">Director:</span>
+                      <span className="crew-label">Yönetmen:</span>
                       <span className="crew-value">{movie.director}</span>
                     </div>
                   )}
                   {movie?.cast && (
                     <div className="crew-item">
-                      <span className="crew-label">Cast:</span>
+                      <span className="crew-label">Oyuncular:</span>
                       <span className="crew-value">
                         {movie.cast.length > 150 ? movie.cast.substring(0, 150) + '...' : movie.cast}
                       </span>
@@ -226,7 +227,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
           <div className="section-header">
             <h2 className="section-title">
               <span className="title-icon">💬</span>
-              Reviews ({reviews?.length || 0})
+{t('reviews.reviews')} ({reviews?.length || 0})
             </h2>
           </div>
 
@@ -235,8 +236,8 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
             {user ? (
               <div className="review-form-card">
                 <div className="form-header">
-                  <h4>Write a Review</h4>
-                  <p>Share your thoughts about this movie</p>
+                  <h4>{t('reviews.writeReview')}</h4>
+                  <p>{t('reviews.shareThoughts')}</p>
                   <div className="form-type-buttons">
                     <Button 
                       variant={!showDetailedForm ? "primary" : "outline-primary"}
@@ -244,7 +245,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                       onClick={() => setShowDetailedForm(false)}
                       className="form-type-btn"
                     >
-                      Quick Review
+                      Hızlı Yorum
                     </Button>
                     <Button 
                       variant={showDetailedForm ? "primary" : "outline-primary"}
@@ -252,14 +253,14 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                       onClick={() => setShowDetailedForm(true)}
                       className="form-type-btn"
                     >
-                      Detailed Review
+                      Detaylı Yorum
                     </Button>
                   </div>
                 </div>
                 <ReviewForm 
                   handleSubmit={addReview} 
                   revText={revText} 
-                  labelText="What did you think?" 
+                  labelText="Ne düşündünüz?" 
                   isDetailed={showDetailedForm}
                   onDetailedSubmit={addDetailedReview}
                 />
@@ -267,9 +268,9 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
             ) : (
               <div className="login-prompt">
                 <div className="prompt-icon">🔒</div>
-                <h4>Sign in to write a review</h4>
-                <p>Join the conversation and share your thoughts about this movie.</p>
-                <a href="/login" className="login-btn">Sign In</a>
+                <h4>Yorum yazmak için giriş yapın</h4>
+                <p>Sohbete katılın ve bu film hakkındaki düşüncelerinizi paylaşın.</p>
+                <a href="/login" className="login-btn">Giriş Yap</a>
               </div>
             )}
           </div>
@@ -291,15 +292,15 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                 };
 
                 // Güvenli userName kontrolü
-                const displayName = r.userName || r.name || 'Anonymous';
-                const avatarLetter = displayName === 'Anonymous' ? 'A' : displayName.charAt(0).toUpperCase();
+                const displayName = r.userName || r.name || 'Anonim';
+                const avatarLetter = displayName === 'Anonim' ? 'A' : displayName.charAt(0).toUpperCase();
 
                 // Review detayları
                 const renderRating = () => {
                   if (r.rating) {
                     return (
                       <div className="review-rating">
-                        <span className="rating-label">Rating:</span>
+                        <span className="rating-label">Puan:</span>
                         <div className="stars-display">
                           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                             <span key={star} className={`star ${star <= r.rating ? 'filled' : ''}`}>⭐</span>
@@ -336,7 +337,11 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                     return (
                       <div className="review-voting">
                         <span className="helpful-text">
-                          {helpfulPercentage}% found this helpful ({helpfulCount} of {totalCount} votes)
+                          {t('reviews.helpfulText', { 
+                            percentage: helpfulPercentage, 
+                            helpfulCount: helpfulCount, 
+                            totalCount: totalCount 
+                          })}
                         </span>
                         <div className="voting-buttons">
                           <Button 
@@ -345,7 +350,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                             onClick={() => voteReview(r._id, true)}
                             className="vote-btn"
                           >
-                            👍 Helpful
+{t('reviews.helpful')}
                           </Button>
                           <Button 
                             size="sm" 
@@ -353,7 +358,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                             onClick={() => voteReview(r._id, false)}
                             className="vote-btn"
                           >
-                            👎 Not Helpful
+{t('reviews.notHelpful')}
                           </Button>
                         </div>
                       </div>
@@ -380,7 +385,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                                 variant={r.reviewType === 'spoiler' ? 'warning' : 'info'} 
                                 className="review-type-badge"
                               >
-                                {r.reviewType === 'spoiler' ? '⚠️ Spoilers' : '✅ No Spoilers'}
+                                {r.reviewType === 'spoiler' ? t('reviews.spoilerContains') : t('reviews.spoilerFree')}
                               </Badge>
                             )}
                             {r.isRecommended !== undefined && (
@@ -388,7 +393,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
                                 variant={r.isRecommended ? 'success' : 'danger'} 
                                 className="recommendation-badge"
                               >
-                                {r.isRecommended ? '👍 Recommends' : '👎 Does not recommend'}
+                                {r.isRecommended ? t('reviews.recommends') : t('reviews.notRecommend')}
                               </Badge>
                             )}
                           </div>
@@ -416,8 +421,8 @@ const Reviews = ({getMovieData,movie,reviews,setReviews,user}) => {
             ) : (
               <div className="no-reviews">
                 <div className="no-reviews-icon">📝</div>
-                <h4>No reviews yet</h4>
-                <p>Be the first to share your thoughts about this movie!</p>
+                <h4>Henüz yorum yok</h4>
+                <p>Bu film hakkında ilk düşüncenizi paylaşın!</p>
               </div>
             )}
           </div>

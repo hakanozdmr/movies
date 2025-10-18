@@ -34,6 +34,13 @@ build/
 
 ### ENV Files###
 .env
+/src/main/resources/.env
+*.env
+**/resources/.env
+/src/main/client/.env
+**/.env
+
+
 
 ### Docker ###
 .dockerignore
